@@ -11,6 +11,24 @@ namespace Sudoku
     public class Player : IEquatable<Player>, IEquatable<string>
     {
         public string Name { get; set; }
+
+        public bool IsAvailable {
+            get {
+                try
+                {
+                    if (WebSocket == null || WebSocket.State != WebSocketState.Open)
+                    {
+                        return false;
+                    }
+                    return true;
+                }
+                catch (Exception)
+                {
+                    return false;
+                }                
+            }
+        }
+
         private WebSocket WebSocket { get; }
 
         public Player(string name, WebSocket webSocket)

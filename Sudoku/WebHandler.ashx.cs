@@ -17,10 +17,7 @@ namespace Sudoku
     {
         //Список игр
         public static SudokuGames SGames = new SudokuGames();
-
-        // Список всех клиентов
-        private static readonly List<WebSocket> Clients = new List<WebSocket>();
-
+        
         // Блокировка для обеспечения потокабезопасности
         private static readonly ReaderWriterLockSlim Locker = new ReaderWriterLockSlim();
 
@@ -52,7 +49,33 @@ namespace Sudoku
                 {                    
                     byte[] bytes = Encoding.UTF8.GetBytes(response);
                     ArraySegment<byte> responseBuffer = new ArraySegment<byte>(bytes);
-                    await socket.SendAsync(responseBuffer, WebSocketMessageType.Text, true, CancellationToken.None);
+
+                    int tryCnt = 10;
+                    while (tryCnt-- > 0)
+                    {
+                        try
+                        {
+                            await socket.SendAsync(responseBuffer, WebSocketMessageType.Text, true, CancellationToken.None);
+                            break;
+                        }
+                        catch (ObjectDisposedException)
+                        {
+                            //Отвал
+                            break;
+                        }
+                        catch (InvalidOperationException)
+                        {
+                            Thread.Sleep(100);
+                        }
+                        catch (Exception ex)
+                        {
+                            Thread.Sleep(100);
+                            string s = ex.Message;
+                            s = ex.ToString();
+                        }
+                    }
+
+                    //await socket.SendAsync(responseBuffer, WebSocketMessageType.Text, true, CancellationToken.None);
                 }
             }
         }

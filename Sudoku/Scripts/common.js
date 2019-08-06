@@ -4,12 +4,12 @@
     this.init = function () {
         ShowGameTable(3);
 
-        GetSocket();
+        GetSocket('search_games');
 
         $("#createGame").click(function () {
             //Проверка имени
-            playerName = $("#user").val();
-            if (!CheckName(playerName))
+            var name = $("#user").val();
+            if (!CheckName(name))
             {
                 return;
             }
@@ -21,7 +21,12 @@
             var size = $('#selectSize').val();
             var difficult = $('#selectDifficult').val();
 
-            GetSocket().send('new#' + playerName + '#' + size + '#' + difficult);
+            var name = $("#user").val();
+            if (!CheckName(name)) {
+                return;
+            }
+
+            GetSocket('new#' + name + '#' + size + '#' + difficult);
 
             $('#createModal').modal('hide');
         });
@@ -40,23 +45,23 @@
                 var s = $(this).attr('id').split('_');
                 var x = s[1];
                 var y = s[2];
-                GetSocket().send('move#' + playerName + '#' + gameId + '#' + x + '#' + y + '#' + value);
+                GetSocket('move#' + playerName + '#' + gameId + '#' + x + '#' + y + '#' + value);
             }
         });
 
         $("body").on("click", ".game", function () {
             //Вход в чужую игру                        
-            playerName = $("#user").val();
-            if (!CheckName(playerName)) {
+            var name = $("#user").val();
+            if (!CheckName(name)) {
                 return;
             }
-            GetSocket().send('join#' + playerName + '#' + $(this).attr("guid"));
+            GetSocket('join#' + name + '#' + $(this).attr("guid"));
         });
 
         $("body").on("click", ".exit", function () {            
-            GetSocket().send('exit#' + playerName + '#' + gameId);
+            GetSocket('exit#' + playerName + '#' + gameId);
             ClearGameArea();            
-            GetSocket().send('search_games');
+            GetSocket('search_games');
         });
 
         $("body").on("click", "#rating", function (e) {
@@ -64,35 +69,43 @@
         });
 
         $("body").on("click", "#showRating", function (e) {
-            GetSocket().send('get_top');            
+            GetSocket('get_top');
         });
     }
 }
 
-function GetSocket()
+function GetSocket(par)
 {
     if (socket != null && socket.readyState != WebSocket.CLOSED)
     {
+        socket.send(par);
         return socket;
     }
 
     if (typeof (WebSocket) !== 'undefined') {
-        //socket = new WebSocket("ws://62.213.76.157:80/WebHandler.ashx");
-        socket = new WebSocket("ws://localhost/Sudoku/WebHandler.ashx");
+        socket = new WebSocket("ws://62.213.76.157:80/WebHandler.ashx");
+        //socket = new WebSocket("ws://localhost/Sudoku/WebHandler.ashx");
     } else {
-        //socket = new MozWebSocket("ws://62.213.76.157:80/WebHandler.ashx");
-        socket = new MozWebSocket("ws://localhost/Sudoku/WebHandler.ashx");        
+        socket = new MozWebSocket("ws://62.213.76.157:80/WebHandler.ashx");
+        //socket = new MozWebSocket("ws://localhost/Sudoku/WebHandler.ashx");        
     }
 
     socket.onopen = function (event) {
         console.log("WebSocket is open now.");
-        socket.send('search_games');
+        //socket.send('search_games');
+        if (par) {
+            socket.send(par);
+        }
     };
 
     socket.onmessage = function (msg) {
         s = msg.data.toString();
         s = s.replace(/\0/g, '');
         var res = s.split("#");
+
+        console.log(s);
+        console.log(gameId);
+        console.log(playerName);
 
         switch (res[0]) {
             case 'get_top':
@@ -118,8 +131,7 @@ function GetSocket()
                 ClearCell(res[1], res[2]);
                 alert("Невозможно!");
                 break;
-            case 'search_games':
-                console.log(s);
+            case 'search_games':                
                 ShowGames(res);
                 break;
             case 'join':
@@ -190,7 +202,10 @@ function FillGameArea(str)
 }
 
 function ClearGameArea()
-{    
+{
+    gameId = '';
+    playerName = '';
+
     $(".intInput").remove();
     $("td").text('');
     $(".exit").remove();

@@ -85,4 +85,3 @@ c:\users\pechiorinvy\documents\visual studio 2015\Projects\Sudoku\Sudoku\bin\ru\
 c:\users\pechiorinvy\documents\visual studio 2015\Projects\Sudoku\Sudoku\bin\ru\Microsoft.Owin.Security.MicrosoftAccount.resources.dll
 c:\users\pechiorinvy\documents\visual studio 2015\Projects\Sudoku\Sudoku\obj\Debug\Sudoku.dll
 c:\users\pechiorinvy\documents\visual studio 2015\Projects\Sudoku\Sudoku\obj\Debug\Sudoku.pdb
-C:\Users\pechiorinvy\Documents\Visual Studio 2015\Projects\Sudoku\Sudoku\obj\Debug\Sudoku.csprojResolveAssemblyReference.cache

@@ -46,7 +46,18 @@ namespace Sudoku
         {
             if (Players.Contains(p))
             {
-                return false;
+                Player pp = GetPlayer(p.Name);
+                if (pp != null)
+                {
+                    if (pp.IsAvailable)
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        RemovePlayer(pp.Name);
+                    }
+                }                
             }
 
             Locker.EnterWriteLock();
