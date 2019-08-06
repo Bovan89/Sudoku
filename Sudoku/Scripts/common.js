@@ -2,17 +2,7 @@
     _this = this;
 
     this.init = function () {
-        /*var socket;        
-
-        if (typeof (WebSocket) !== 'undefined') {
-            socket = new WebSocket("ws://localhost/Sudoku/WebHandler.ashx");
-        } else {
-            socket = new MozWebSocket("ws://localhost/Sudoku/WebHandler.ashx");
-        }*/
-        
-        /*socket.onclose = function (event) {
-            alert('Мы потеряли её. Пожалуйста, обновите страницу');
-        };*/
+        ShowGameTable(3);
 
         GetSocket();
 
@@ -22,13 +12,27 @@
             if (!CheckName(playerName))
             {
                 return;
-            }           
-            GetSocket().send('new#' + playerName);
+            }
+
+            $('#createModal').modal("show");            
+        });
+
+        $("body").on("click", "#OKCreate", function (e) {
+            var size = $('#selectSize').val();
+            var difficult = $('#selectDifficult').val();
+
+            GetSocket().send('new#' + playerName + '#' + size + '#' + difficult);
+
+            $('#createModal').modal('hide');
+        });
+
+        $("body").on("click", "#CancelCreate", function (e) {
+            $('#createModal').modal('hide');
         });
 
         $("body").on("change", ".intInput", function () {
             var value = $(this).val();
-            if (value > 9 || value < 1) {
+            if (value > size || value < 1) {
                 $(this).val('');
                 alert('Не корректное число');
             }
@@ -73,11 +77,11 @@ function GetSocket()
     }
 
     if (typeof (WebSocket) !== 'undefined') {
-        socket = new WebSocket("ws://62.213.76.157/Sudoku/WebHandler.ashx");
+        //socket = new WebSocket("ws://62.213.76.157:80/WebHandler.ashx");
+        socket = new WebSocket("ws://localhost/Sudoku/WebHandler.ashx");
     } else {
-        socket = new MozWebSocket("ws://62.213.76.157/Sudoku/WebHandler.ashx");
-        //localhost
-        //62.213.76.157
+        //socket = new MozWebSocket("ws://62.213.76.157:80/WebHandler.ashx");
+        socket = new MozWebSocket("ws://localhost/Sudoku/WebHandler.ashx");        
     }
 
     socket.onopen = function (event) {
@@ -119,7 +123,7 @@ function GetSocket()
                 ShowGames(res);
                 break;
             case 'join':
-            case 'new':
+            case 'new':                
                 FillGameArea(res[2]);
                 gameId = res[1];
                 playerName = res[3];
@@ -153,17 +157,19 @@ function ShowGames(res) {
 
 function FillGameArea(str)
 {
-    //Заполнение полей игры
-    var l = Math.sqrt(str.length);
+    //Заполнение полей игры    
     var i = 0;
     var value = '';
     var id = '';
+    var arrValues = str.split(':');
+    size = Math.sqrt(arrValues.length);
+    
+    ClearGameArea();
+    ShowGameTable(Math.sqrt(size));
 
-    ClearGameArea();    
-
-    for (var j = 0; j < str.length; j++) {
-        value = str.charAt(j);
-        id = i + "_" + (j % l);
+    for (var j = 0; j < arrValues.length; j++) {
+        value = arrValues[j];
+        id = i + "_" + (j % size);
 
         $("#cell_" + id).text('');
 
@@ -174,7 +180,7 @@ function FillGameArea(str)
             $("#cell_" + id).html('<input type="number" class="intInput" id="t_' + id + '" min="1" max="9" />');
         }        
                 
-        if ((j + 1) % l == 0) {
+        if ((j + 1) % size == 0) {
             i++;
         }
     }        
@@ -184,9 +190,7 @@ function FillGameArea(str)
 }
 
 function ClearGameArea()
-{
-    $("#gameArea").attr("gameId", "");
-    $("#gameArea").attr("playerName", "");   
+{    
     $(".intInput").remove();
     $("td").text('');
     $(".exit").remove();
@@ -227,11 +231,54 @@ function ShowTop(res) {
     $('#ratingModal').modal("show");
 }
 
+function ShowGameTable(n) {
+    var html = '';
+    var n2 = n * n;
+    var id = '', cell_class = '';
+
+    for (var i = 0; i < n2; i++) {
+        html = html + '<tr>';
+
+        for (var j = 0; j < n2; j++) {            
+            cell_class = '';
+            id = '_' + i + '_' + j;
+            
+            if ((i + 1) % n == 1) {
+                //top
+                cell_class = cell_class + ' td_top';
+            }
+            if ((i + 1) % n == 0) {
+                //bottom
+                cell_class = cell_class + ' td_bottom';
+            }
+            if ((j + 1) % n == 1) {
+                //left
+                cell_class = cell_class + ' td_left';
+            }
+            if ((j + 1) % n == 0) {
+                //right
+                cell_class = cell_class + ' td_right';
+            }
+            if (cell_class != '')
+            {
+                cell_class = 'class="' + cell_class.substr(1) + '"';
+            }
+
+            html = html + '<td id="cell' + id + '"' + cell_class + '></td>';
+        }
+
+        html = html + '</tr>' + '\n';
+    }
+
+    $("#gameTable").html(html);
+}
+
 var common = null;
 
 var gameId = '';
 var playerName = '';
 var socket = null;
+var size = 9;
 
 $().ready(function () {
     common = new Common();

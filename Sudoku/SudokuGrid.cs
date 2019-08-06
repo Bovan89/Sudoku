@@ -19,14 +19,14 @@ namespace Sudoku
 
         ///
 
-        public SudokuGrid(int size = 3)
+        public SudokuGrid(int size = 3, int difficult = 3)
         {
             Size = size;
             Size2 = Size * Size;
 
             Reset();
             Mix();
-            Prepare(3);
+            Prepare(difficult);
         }
 
         public void Reset()
@@ -88,15 +88,12 @@ namespace Sudoku
             return true;
         }
 
-        public void Prepare(int clearCnt = 0)
+        public void Prepare(int difficult)
         {
             int x, y;
             Random rnd = new Random();
 
-            if (clearCnt == 0)
-            {
-                clearCnt = Size2 * 3;
-            }
+            int clearCnt = Size2 * difficult;
 
             for (int i = 0; i < clearCnt; i++)
             {
@@ -148,7 +145,13 @@ namespace Sudoku
                 for (int j = 0; j < Size2; j++)
                 {
                     ret.Append(Grid[i, j]);
+                    ret.Append(':');
                 }
+            }
+
+            if (ret.Length > 0)
+            {
+                ret.Remove(ret.Length - 1, 1);
             }
 
             return ret.ToString();

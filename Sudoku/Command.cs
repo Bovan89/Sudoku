@@ -118,7 +118,10 @@ namespace Sudoku
         {
             if (Games != null)
             {
-                SudokuGame game = new SudokuGame(new SudokuGrid(), Games);
+                int size = Convert.ToInt32(GameId);
+                int difficult = Convert.ToInt32(X);
+
+                SudokuGame game = new SudokuGame(new SudokuGrid(size, difficult), Games);
                 game.Name = Name;                
                 game.AddPlayer(new Player(Name, WebSocket));
 

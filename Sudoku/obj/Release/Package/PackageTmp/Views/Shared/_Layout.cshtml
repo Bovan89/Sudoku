@@ -52,6 +52,38 @@
         </div>
     </div>
 
+    <div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="createText">Создать игру</h4>
+                </div>
+
+                <div class="modal-body">
+                    <h5 class="modal-header">Размер</h5>
+                    <select class="custom-select" id="selectSize">
+                        <option selected value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>                        
+                    </select>
+
+                    <h5 class="modal-header">Сложность</h5>
+                    <select class="custom-select" id="selectDifficult">
+                        <option selected value="1">Простая</option>
+                        <option value="2">Нормальная</option>
+                        <option value="3">Сложная</option>
+                    </select>
+                </div>
+
+                <div class="modal-footer">
+                    <button id="OKCreate" type="button" class="btn btn-primary btn-lg">OK</button>
+                    <button id="CancelCreate" type="button" class="btn btn-default btn-lg">Отмена</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
