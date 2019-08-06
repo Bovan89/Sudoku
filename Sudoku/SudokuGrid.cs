@@ -50,7 +50,7 @@ namespace Sudoku
             GridTransform[] trans = new GridTransform[5] { Transpose, SwapRows, SwapColumns, SwapRowsArea, SwapColumnsArea };
 
             GridTransform doTrans = Reset;
-            int transformCnt = rnd.Next(int.MaxValue) % 30;
+            int transformCnt = rnd.Next(Byte.MaxValue, Byte.MaxValue * 10);
             for (int i = 0; i < transformCnt; i++)
             {
                 doTrans += trans[rnd.Next(int.MaxValue) % 5];
