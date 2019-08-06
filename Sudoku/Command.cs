@@ -122,7 +122,7 @@ namespace Sudoku
                 int difficult = Convert.ToInt32(X);
 
                 SudokuGame game = new SudokuGame(new SudokuGrid(size, difficult), Games);
-                game.Name = Name;                
+                game.Name = Y;                
                 game.AddPlayer(new Player(Name, WebSocket));
 
                 return String.Format("{0}#{1}#{2}#{3}", "new", game.Id, game.SudokuGrid.ToString(), Name);
