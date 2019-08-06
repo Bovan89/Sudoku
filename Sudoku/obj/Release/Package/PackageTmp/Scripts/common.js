@@ -18,15 +18,20 @@
         });
 
         $("body").on("click", "#OKCreate", function (e) {
-            var size = $('#selectSize').val();
-            var difficult = $('#selectDifficult').val();
-
             var name = $("#user").val();
             if (!CheckName(name)) {
                 return;
             }
 
-            GetSocket('new#' + name + '#' + size + '#' + difficult);
+            var gameName = $('#gameName').val();
+            if (!CheckName(gameName)) {
+                return;
+            }
+
+            var size = $('#selectSize').val();
+            var difficult = $('#selectDifficult').val();            
+
+            GetSocket('new#' + name + '#' + size + '#' + difficult + '#' + gameName);
 
             $('#createModal').modal('hide');
         });
