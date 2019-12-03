@@ -88,10 +88,10 @@ function GetSocket(par)
     }
 
     if (typeof (WebSocket) !== 'undefined') {
-        socket = new WebSocket("ws://62.213.76.157:80/WebHandler.ashx");
+        socket = new WebSocket("ws://62.213.76.157:84/WebHandler.ashx");
         //socket = new WebSocket("ws://localhost/Sudoku/WebHandler.ashx");
     } else {
-        socket = new MozWebSocket("ws://62.213.76.157:80/WebHandler.ashx");
+        socket = new MozWebSocket("ws://62.213.76.157:84/WebHandler.ashx");
         //socket = new MozWebSocket("ws://localhost/Sudoku/WebHandler.ashx");        
     }
 
